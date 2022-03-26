@@ -38,15 +38,17 @@ def train(epochs,dataloader, model, criterion, optimizer):
             epoch_loss += loss.item()
             print("{}/{}, train_loss:{}".format(step, (dataset_size - 1)//dataloader.batch_size, loss.item()))
         print("epoch %d loss:%0.3f"%(epoch, epoch_loss/step))
-    torch.save({'model':model.state_dict, 'optimizer':optimizer.state_dict(), 'epoch':epoch}, "trained_models/checkpoint_"+str(epoch))
+    torch.save({'model':model.state_dict, 'optimizer':optimizer.state_dict(), 'epoch':epoch}, "/output/checkpoint_"+str(epoch))
     return model
 
 def main():
     epochs = 10
 
-    path = "C:\\Users\\z1023\\WorkSpace\\biomedical\\nnUNetFrame\\UNet\\Task027_ACDC"
+    path = "Task027_ACDC"
     image_list = get_file_list(os.path.join(path,'imagesTr'))
+    image_list.sort()
     label_list = get_file_list(os.path.join(path,'labelsTr'))
+    label_list.sort()
     data_json_path = os.path.join(path, "dataset.json")
     dataset =  ACDCDataset(image_list, label_list, data_json_path)
     dataloader = DataLoader(dataset, batch_size = 2, shuffle = True, collate_fn=collate_fn)

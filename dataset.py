@@ -5,6 +5,9 @@ import numpy as np
 
 from torch.utils.data import Dataset
 
+import matplotlib.pyplot as plt
+from PIL import Image
+
 def collate_fn(data):
     images, labels = [], []
     
@@ -30,12 +33,12 @@ class ACDCDataset(Dataset):
         label_path = self.label_list[index]
         
         resize = 224
-        image_array = self._get_array_from_nii(image_path)
+        image_array = self._get_array_from_nii(image_path).astype(np.float)
         image_array = np.resize(image_array, (image_array.shape[0], resize, resize)) # [depth, heigth, width]
         label_array = (self._get_array_from_nii(label_path) > 0).astype(np.float)
         label_array = np.resize(label_array,(label_array.shape[0], resize, resize)) # [depth, heigth, width]
         
-        return torch.from_numpy(image_array), torch.from_numpy(label_array)
+        return torch.from_numpy(image_array).float(), torch.from_numpy(label_array).float()
         
     def _get_array_from_nii(self, nii_file):
         array = sitk.ReadImage(nii_file)
